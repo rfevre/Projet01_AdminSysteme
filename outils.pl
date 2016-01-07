@@ -9,11 +9,14 @@ checkParameter();
 
 # Verifie les paramétres
 sub checkParameter {
-  die "Parametres : ajout/suppr/modif ou option --help/-h et --dry-run/-n\n" if @ARGV != 1;
+  die "Parametres : ajout/suppr/modif ou option --help/-h et --dry-run/-n\n" if @ARGV < 1;
 
   if ($ARGV[0] eq "ajout")
   {
     my $cpt=1;
+    if ( $ARGV[1] =~ m/^\d+$/ ) {
+      $cpt=$ARGV[1];
+    }
     ajout($cpt);
   }
   elsif ($ARGV[0] eq "suppr")
@@ -48,10 +51,10 @@ sub ajout {
   print @tableauUtilisateur, "\n";
 }
 
-# Récupére une hashmap avec toute les infos du ou des utilisateur(s)
+# Récupére un tableau avec toute les infos du ou des utilisateur(s)
 sub recupInfosUtilisateur {
   my $cpt = shift();
-  # Hashmap à renvoyé
+  # Tableau à renvoyé
   my @tableauUtilisateur = undef;
 
   for($i=0;$i<$cpt;$i++){
@@ -59,18 +62,22 @@ sub recupInfosUtilisateur {
 
     # Table de hashage contenant les infos de l'utilisateur
     my %utilisateur = undef;
+
     print "Nom de compte de l'utilisateur :","\n";
     $utilisateur{"login"}=<STDIN>;
+
     my $mdp = 0;
     while (true) {
       print "Mot de passe de l'utilisateur :","\n";
       system ("stty -echo");
       $utilisateur{"mdp"}=<STDIN>;
       system ("stty echo");
+
       print "Retaper le mot de passe de l'utilisateur :","\n";
       system ("stty -echo");
       $mdp=<STDIN>;
       system ("stty echo");
+      
       if ($utilisateur{"mdp"} ne $mdp){
         print "\n\n","Mauvais MDP, veuillez recommencer","\n\n";
         redo;
@@ -79,12 +86,16 @@ sub recupInfosUtilisateur {
         last;
       }
     }
+
     print "Infos de l'utilisateur :","\n";
     $utilisateur{"infos"}=<STDIN>;
+
     print "Repertoire personnel de l'utilisateur :","\n";
     $utilisateur{"repPerso"}=<STDIN>;
+
     print "Shell de l'utilisateur :","\n";
     $utilisateur{"shell"}=<STDIN>;
+
     $utilisateur{"UID"}=ajoutUID();
     $utilisateur{"GID"}=ajoutGID();
 
@@ -109,7 +120,7 @@ sub ajoutUID {
 }
 
 sub ajoutGID {
-  return "GID;"
+  return "GID";
 }
 
 # Suppression d'un utilisateur
