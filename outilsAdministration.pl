@@ -149,7 +149,9 @@ sub recupereGID {
 
 # Ajoute l'utilisateur dans le fichier passwd
 sub ajoutDansPasswd {
+  # Sous la forme "login:mot_de_passe:UID:GID:info_utilisateur:repertoire_perso:shell_de_connexion"
   my $mapUtilisateur = shift();
+
   $chaineUtilisateur = "$mapUtilisateur->{\"login\"}:";
   $chaineUtilisateur .= "x:";
   $chaineUtilisateur .= "$mapUtilisateur->{\"UID\"}:";
@@ -158,15 +160,34 @@ sub ajoutDansPasswd {
   $chaineUtilisateur .= "$mapUtilisateur->{\"repPerso\"}:";
   $chaineUtilisateur .= "$mapUtilisateur->{\"shell\"}";
 
-  ## Sous la forme "login:mot_de_passe:UID:GID:info_utilisateur:repertoire_perso:shell_de_connexion"
   open(FIC, ">>$passwd") or die "open : $!";
   print FIC $chaineUtilisateur."\n";
   close(FIC);
 }
 
-# Ajoute du mot de passe dans le fichier shadow
+# Ajout du mot de passe dans le fichier shadow
 sub ajoutDansShadow {
+  # Sous la forme "login:mot_de_passe_crypté:jours_depuis_dernière_modif:nombre_de_jours_entre_2_modif:nombre_de_jours_avant_changement_mdp:nombre_de_jours_avertissement_expiration_mdp:::"
+  my $mapUtilisateur = shift();
 
+  # Transformation de seconde en jours du temps passé depuis le 01/01/1970
+  my $date = sprintf("%.0f", time/86400 );
+  # Cryptage du mot de passe
+  my $mdp = crypt($mapUtilisateur->{"mdp"},$mapUtilisateur->{"UID"});
+
+  $chaineMdp = "$mapUtilisateur->{\"login\"}:";
+  $chaineMdp .= "$mdp:";
+  $chaineMdp .= "$date:";
+  $chaineMdp .= "0:";
+  $chaineMdp .= "99999:";
+  $chaineMdp .= "7:";
+  $chaineMdp .= ":";
+  $chaineMdp .= ":";
+  $chaineMdp .= ":";
+
+  open(FIC, ">>$shadow") or die "open : $!";
+  print FIC $chaineMdp."\n";
+  close(FIC);
 }
 
 # Ecrire entrée dans /etc/group
