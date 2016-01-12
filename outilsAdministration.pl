@@ -1,9 +1,8 @@
-
 #!/usr/bin/perl
 
-$group="./copie_fichier/group";
-$shadow="./copie_fichier/shadow";
-$passwd="./copie_fichier/passwd";
+$group="/etc/group";
+$shadow="/etc/shadow";
+$passwd="/etc/passwd";
 
 $UID = 101;
 $GID = 101;
@@ -60,28 +59,25 @@ sub ajout {
     ajoutDansShadow($mapUtilisateur);
 
     # Ecrire entrée dans /etc/group
-    ajoutDansDroup();
+    ajoutDansDroup($mapUtilisateur);
 
     # Création du répertoire personnalisé
-    creationRepertoire();
+    creationRepertoire($mapUtilisateur);
 
     # Mise en place des fichiers d'initialisation du shell
-    initialisationShell();
+    initialisationShell($mapUtilisateur);
 
     # Attribution des droits
-    attibutionDroits();
+    attibutionDroits($mapUtilisateur);
 
     # Définir le propriétaire
-    definitionProprietaire();
+    definitionProprietaire($mapUtilisateur);
 
     # Définition du mot de passe
-    definitionMotDePasse();
+    definitionMotDePasse($mapUtilisateur);
 
-    # TEST !!!
-    print $mapUtilisateur, "\n";
-    print $mapUtilisateur->{"mdp"},"\n";
+    print "OK\n";
   }
-
 }
 
 # Renvoie une map avec toute les infos de l'utilisateur à créer
@@ -94,21 +90,21 @@ sub recupInfosUtilisateur {
   print "Nom de compte de l'utilisateur :","\n";
   $mapUtilisateur{"login"}=<STDIN>;
 
-  my $tmp = undef;
-  do {
-    print "Mot de passe de l'utilisateur :","\n";
-    system ("stty -echo");
-    $mapUtilisateur{"mdp"}=<STDIN>;
-    system ("stty echo");
-
-    print "Retaper le mot de passe de l'utilisateur :","\n";
-    system ("stty -echo");
-    $tmp=<STDIN>;
-    system ("stty echo");
-
-    print "\n","Mauvais mot de passe, veuillez recommencer","\n\n" if ($mapUtilisateur{"mdp"} ne $tmp);
-
-  } while ($mapUtilisateur{"mdp"} ne $tmp);
+  # my $tmp = undef;
+  # do {
+  #   print "Mot de passe de l'utilisateur :","\n";
+  #   system ("stty -echo");
+  #   $mapUtilisateur{"mdp"}=<STDIN>;
+  #   system ("stty echo");
+  #
+  #   print "Retaper le mot de passe de l'utilisateur :","\n";
+  #   system ("stty -echo");
+  #   $tmp=<STDIN>;
+  #   system ("stty echo");
+  #
+  #   print "\n","Mauvais mot de passe, veuillez recommencer","\n\n" if ($mapUtilisateur{"mdp"} ne $tmp);
+  #
+  # } while ($mapUtilisateur{"mdp"} ne $tmp);
 
   print "Infos de l'utilisateur :","\n";
   $mapUtilisateur{"infos"}=<STDIN>;
@@ -173,10 +169,10 @@ sub ajoutDansShadow {
   # Transformation de seconde en jours du temps passé depuis le 01/01/1970
   my $date = sprintf("%.0f", time/86400 );
   # Cryptage du mot de passe
-  my $mdp = crypt($mapUtilisateur->{"mdp"},$mapUtilisateur->{"UID"});
+  #my $mdp = crypt($mapUtili10sateur->{"mdp"},$mapUtilisateur->{"UID"});
 
   $chaineMdp = "$mapUtilisateur->{\"login\"}:";
-  $chaineMdp .= "$mdp:";
+  $chaineMdp .= "!:";
   $chaineMdp .= "$date:";
   $chaineMdp .= "0:";
   $chaineMdp .= "99999:";
@@ -192,32 +188,53 @@ sub ajoutDansShadow {
 
 # Ecrire entrée dans /etc/group
 sub ajoutDansDroup() {
+  ## Sous la forme "nom_du_groupe:mot_de_passe:GID:liste_des_utilisateurs"
+  my $mapUtilisateur = shift();
+  $chaineGroupe = "$mapUtilisateur->{\"login\"}:";
+  $chaineGroupe .= "x:";
+  $chaineGroupe .= "$mapUtilisateur->{\"GID\"}:";
+  $chaineGroupe .= ":";
 
+  open(FIC, ">>$group") or die "open : $!";
+  print FIC $chaineGroupe."\n";
+  close(FIC);
 }
 
-# Création du répertoire personnalisé
+# Création du répertoire personnel
 sub creationRepertoire() {
-
+  my $mapUtilisateur = shift();
+  my $repertoire = "$mapUtilisateur->{\"repPerso\"}";
+  mkdir $repertoire or die "mkdir : $!";
 }
 
 # Mise en place des fichiers d'initialisation du shell
 sub initialisationShell() {
-
+  my $mapUtilisateur = shift();
+  my $repertoire = "$mapUtilisateur->{\"repPerso\"}";
+  `cp -v /etc/skel/.* $repertoire`;
 }
 
 # Attribution des droits
 sub attibutionDroits() {
-
+  my $mapUtilisateur = shift();
+  my $repertoire = "$mapUtilisateur->{\"repPerso\"}";
+  chmod 0755, $repertoire;
 }
 
 # Définir le propriétaire
 sub definitionProprietaire() {
-
+  my $mapUtilisateur = shift();
+  my $uid = "$mapUtilisateur->{\"UID\"}";
+  my $gid = "$mapUtilisateur->{\"GID\"}";
+  my $repertoire = "$mapUtilisateur->{\"repPerso\"}";
+  chown $uid, $gid, $repertoire;
 }
 
 # Définition du mot de passe
 sub definitionMotDePasse() {
-
+  my $mapUtilisateur = shift();
+  my $login = "$mapUtilisateur->{\"login\"}";
+  `passwd $login`;
 }
 
 # Suppression d'un utilisateur
