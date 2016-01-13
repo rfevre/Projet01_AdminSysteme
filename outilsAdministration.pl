@@ -4,8 +4,8 @@ $group="/etc/group";
 $shadow="/etc/shadow";
 $passwd="/etc/passwd";
 
-$UID = 101;
-$GID = 101;
+$UID = 1000;
+$GID = 1000;
 
 checkParameter();
 
@@ -74,7 +74,7 @@ sub ajout {
     definitionProprietaire($mapUtilisateur);
 
     # Définition du mot de passe
-    definitionMotDePasse($mapUtilisateur);
+    # definitionMotDePasse($mapUtilisateur);
 
     print "OK\n";
   }
@@ -90,21 +90,21 @@ sub recupInfosUtilisateur {
   print "Nom de compte de l'utilisateur :","\n";
   $mapUtilisateur{"login"}=<STDIN>;
 
-  # my $tmp = undef;
-  # do {
-  #   print "Mot de passe de l'utilisateur :","\n";
-  #   system ("stty -echo");
-  #   $mapUtilisateur{"mdp"}=<STDIN>;
-  #   system ("stty echo");
-  #
-  #   print "Retaper le mot de passe de l'utilisateur :","\n";
-  #   system ("stty -echo");
-  #   $tmp=<STDIN>;
-  #   system ("stty echo");
-  #
-  #   print "\n","Mauvais mot de passe, veuillez recommencer","\n\n" if ($mapUtilisateur{"mdp"} ne $tmp);
-  #
-  # } while ($mapUtilisateur{"mdp"} ne $tmp);
+  my $tmp = undef;
+  do {
+    print "Mot de passe de l'utilisateur :","\n";
+    system ("stty -echo");
+    $mapUtilisateur{"mdp"}=<STDIN>;
+    system ("stty echo");
+
+    print "Retaper le mot de passe de l'utilisateur :","\n";
+    system ("stty -echo");
+    $tmp=<STDIN>;
+    system ("stty echo");
+
+    print "\n","Mauvais mot de passe, veuillez recommencer","\n\n" if ($mapUtilisateur{"mdp"} ne $tmp);
+
+  } while ($mapUtilisateur{"mdp"} ne $tmp);
 
   print "Infos de l'utilisateur :","\n";
   $mapUtilisateur{"infos"}=<STDIN>;
@@ -169,10 +169,10 @@ sub ajoutDansShadow {
   # Transformation de seconde en jours du temps passé depuis le 01/01/1970
   my $date = sprintf("%.0f", time/86400 );
   # Cryptage du mot de passe
-  #my $mdp = crypt($mapUtili10sateur->{"mdp"},$mapUtilisateur->{"UID"});
+  my $mdp = crypt($mapUtilisateur->{"mdp"},"\$6\$"."$mapUtilisateur->{\"UID\"}"."\$");
 
   $chaineMdp = "$mapUtilisateur->{\"login\"}:";
-  $chaineMdp .= "!:";
+  $chaineMdp .= "$mdp:";
   $chaineMdp .= "$date:";
   $chaineMdp .= "0:";
   $chaineMdp .= "99999:";
