@@ -5,12 +5,12 @@
 
 ### TODO :
 
-- [ ] Ajouter des utilisateurs
-- [ ] Supprimer des utilisateurs
+- [x] Ajouter un ou des utilisateurs
+- [x] Supprimer un ou des utilisateurs
 - [ ] Modifier les données des utilisateurs
   - [ ] Mot de passe
   - [ ] Répertoire de travail
-  - [ ] Langage de commande
+  - [ ] Langage de commande
 
 ---
 
