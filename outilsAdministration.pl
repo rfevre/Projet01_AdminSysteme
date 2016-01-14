@@ -13,17 +13,18 @@ checkParameter();
 sub checkParameter {
   die "Parametres : ajout/suppr/modif ou option --help/-h et --dry-run/-n\n" if @ARGV < 1;
 
+  my $cpt=1;
+  if ( $ARGV[1] =~ m/^\d+$/ ) {
+    $cpt=$ARGV[1];
+  }
+
   if ($ARGV[0] eq "ajout")
   {
-    my $cpt=1;
-    if ( $ARGV[1] =~ m/^\d+$/ ) {
-      $cpt=$ARGV[1];
-    }
     ajout($cpt);
   }
   elsif ($ARGV[0] eq "suppr")
   {
-    suppr();
+    suppr($cpt);
   }
   elsif ($ARGV[0] eq "modif")
   {
@@ -74,9 +75,9 @@ sub ajout {
     definitionProprietaire($mapUtilisateur);
 
     # Définition du mot de passe
-    # definitionMotDePasse($mapUtilisateur);
+    definitionMotDePasse($mapUtilisateur);
 
-    print "OK\n";
+    print "Compte créé\n";
   }
 }
 
@@ -91,29 +92,32 @@ sub recupInfosUtilisateur {
   $mapUtilisateur{"login"}=<STDIN>;
 
   my $tmp = undef;
-  do {
-    print "Mot de passe de l'utilisateur :","\n";
-    system ("stty -echo");
-    $mapUtilisateur{"mdp"}=<STDIN>;
-    system ("stty echo");
-
-    print "Retaper le mot de passe de l'utilisateur :","\n";
-    system ("stty -echo");
-    $tmp=<STDIN>;
-    system ("stty echo");
-
-    print "\n","Mauvais mot de passe, veuillez recommencer","\n\n" if ($mapUtilisateur{"mdp"} ne $tmp);
-
-  } while ($mapUtilisateur{"mdp"} ne $tmp);
+  # do {
+  #   print "Mot de passe de l'utilisateur :","\n";
+  #   system ("stty -echo");
+  #   $mapUtilisateur{"mdp"}=<STDIN>;
+  #   system ("stty echo");
+  #
+  #   print "Retaper le mot de passe de l'utilisateur :","\n";
+  #   system ("stty -echo");
+  #   $tmp=<STDIN>;
+  #   system ("stty echo");
+  #
+  #   print "\n","Mauvais mot de passe, veuillez recommencer","\n\n" if ($mapUtilisateur{"mdp"} ne $tmp);
+  #
+  # } while ($mapUtilisateur{"mdp"} ne $tmp);
 
   print "Infos de l'utilisateur :","\n";
   $mapUtilisateur{"infos"}=<STDIN>;
 
-  print "Repertoire personnel de l'utilisateur :","\n";
+  $tmp = "/home/$mapUtilisateur{\"login\"}";
+  print "Repertoire personnel de l'utilisateur : (par défaut $tmp)","\n";
   $mapUtilisateur{"repPerso"}=<STDIN>;
+  $mapUtilisateur{"repPerso"}="$tmp" if ($mapUtilisateur{"repPerso"} eq "\n");
 
-  print "Shell de l'utilisateur :","\n";
+  print "Shell de l'utilisateur : (par défaut /bin/bash)","\n";
   $mapUtilisateur{"shell"}=<STDIN>;
+  $mapUtilisateur{"shell"}="/bin/bash" if ($mapUtilisateur{"shell"} eq "\n");
 
   $mapUtilisateur{"UID"}=recupereUID();
   $mapUtilisateur{"GID"}=recupereGID();
@@ -169,10 +173,10 @@ sub ajoutDansShadow {
   # Transformation de seconde en jours du temps passé depuis le 01/01/1970
   my $date = sprintf("%.0f", time/86400 );
   # Cryptage du mot de passe
-  my $mdp = crypt($mapUtilisateur->{"mdp"},"\$6\$"."$mapUtilisateur->{\"UID\"}"."\$");
+  # my $mdp = crypt($mapUtilisateur->{"mdp"},"\$6\$"."$mapUtilisateur->{\"UID\"}"."\$");
 
   $chaineMdp = "$mapUtilisateur->{\"login\"}:";
-  $chaineMdp .= "$mdp:";
+  $chaineMdp .= "!:";
   $chaineMdp .= "$date:";
   $chaineMdp .= "0:";
   $chaineMdp .= "99999:";
@@ -234,11 +238,63 @@ sub definitionProprietaire() {
 sub definitionMotDePasse() {
   my $mapUtilisateur = shift();
   my $login = "$mapUtilisateur->{\"login\"}";
-  `passwd $login`;
+  `passwd $login`; # => a modifié
 }
 
 # Suppression d'un utilisateur
 sub suppr {
+  my $cpt = shift();
+  for($i=0;$i<$cpt;$i++){
+    my $login = recupLogin();
+    my $repertoire = recupRepertoire();
+
+    supprDansGroup($login);
+
+    supprDansPasswd($login);
+
+    supprDansShadow($login);
+
+    supprRepertoire($login);
+
+    print "Compte supprimé\n";
+  }
+}
+
+# Recupération du Login de l'utilisateur à supprimer
+sub recupLogin {
+  my $cpt = shift();
+  my $login = undef;
+
+  print "Suppression de l'utilisateur numéro :", $cpt,"\n\n";
+
+  print "Nom de compte de l'utilisateur :","\n";
+  $login=<STDIN>;
+
+  return $login;
+}
+
+# Récupération du répertoire de l'utilisateur
+sub recupRepertoire() {
+
+}
+
+# Suppresion de la ligne de l'utilisateur dans le fichier group
+sub supprDansGroup {
+
+}
+
+# Suppresion de la ligne de l'utilisateur dans le fichier passwd
+sub supprDansPasswd {
+
+}
+
+# Suppresion de la ligne de l'utilisateur dans le fichier shadow
+sub supprDansShadow {
+
+}
+
+# Suppresion du repertoire de l'utilisateur
+sub supprRepertoire {
 
 }
 
