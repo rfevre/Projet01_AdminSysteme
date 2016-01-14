@@ -14,8 +14,8 @@ checkParameter();
 # Verifie les paramétres
 sub checkParameter {
   GetOptions(
-  "h|help" => \$help,    # help
-  "n|dry-run" => \$dryRun,    # help
+  "h|help" => \$help,
+  "n|dry-run" => \$dryRun,
   "a" => \$ajout,
   "f" => \$ajoutFichier,
   "s" => \$suppresion,
@@ -35,8 +35,9 @@ sub checkParameter {
     my $login = $ARGV[0];
     my $repPerso = "/home/$login";
     my $repPerso = $ARGV[1] if ($ARGV[1]);
-    print "Ajout d'un utilisateur","\n";
+    print "Ajout de l'utilisateur $login","\n";
     ajout($login,$repPerso);
+    print "Compte créé\n";
   }
 
   elsif ($ajoutFichier) {
@@ -50,11 +51,15 @@ sub checkParameter {
   }
 
   elsif ($suppresion) {
-    print "suppresion de $ARGV[0]","\n";
+    my $login = $ARGV[0];
+    print "Suppresion de $login","\n";
+    suppr($login);
+    print "Compte supprimé\n";
   }
 
   elsif ($modification) {
-    print "modification de $ARGV[0]","\n";
+    my $login = $ARGV[0];
+    print "modification de $login","\n";
   }
 
   exit 1;
@@ -96,8 +101,6 @@ sub ajout {
 
   # Définition du mot de passe
   # definitionMotDePasse(\%mapUtilisateur);
-
-  print "Compte créé\n";
 }
 
 # Recupere un UID non utilisé dans le fichier passwd
@@ -144,7 +147,7 @@ sub ajoutDansShadow {
   # Transformation de seconde en jours du temps passé depuis le 01/01/1970
   my $date = sprintf("%.0f", time/86400 );
   # Cryptage du mot de passe
-  # my $mdp = crypt($mapUtilisateur->{"mdp"},"\$6\$"."$mapUtilisateur->{\"UID\"}"."\$");
+  # my $mdp = crypt($mapUtilisateur->{"mdp"},"\$6\$"."$mapUtilisateur->{\"UID\"}"."\$");
 
   $chaineMdp = "$mapUtilisateur->{\"login\"}:";
   $chaineMdp .= "!:";
@@ -216,34 +219,14 @@ sub definitionMotDePasse() {
 
 # Suppression d'un utilisateur
 sub suppr {
-  my $cpt = shift();
-  for($i=0;$i<$cpt;$i++){
-    my $login = recupLogin();
+    my $login = shift();
     my $repertoire = recupRepertoire();
 
     supprDansGroup($login);
-
     supprDansPasswd($login);
-
     supprDansShadow($login);
-
-    supprRepertoire($login);
-
-    print "Compte supprimé\n";
+    supprRepertoire($repertoire);
   }
-}
-
-# Recupération du Login de l'utilisateur à supprimer
-sub recupLogin {
-  my $cpt = shift();
-  my $login = undef;
-
-  print "Suppression de l'utilisateur numéro :", $cpt,"\n\n";
-
-  print "Nom de compte de l'utilisateur :","\n";
-  $login=<STDIN>;
-
-  return $login;
 }
 
 # Récupération du répertoire de l'utilisateur
