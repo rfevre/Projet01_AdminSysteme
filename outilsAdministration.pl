@@ -7,6 +7,7 @@ $group="copie_fichier/group";
 $shadow="copie_fichier/shadow";
 $passwd="copie_fichier/passwd";
 
+$split = ":";
 $UID = 1000;
 $GID = 1000;
 
@@ -38,7 +39,7 @@ sub checkParameter {
     my $repPerso = $ARGV[1] if ($ARGV[1]);
     print "Ajout de l'utilisateur $login","\n";
     ajout($login,$repPerso);
-    print "Compte créé\n";
+    print "Compte utilisateur créé\n";
   }
 
   elsif ($ajoutFichier) {
@@ -48,7 +49,9 @@ sub checkParameter {
     }
     else {
       print "Ajout par rapport au fichier : $fichier","\n";
+      ajoutFichier($fichier);
     }
+    print "Compte utilisateurs créé\n";
   }
 
   elsif ($suppresion) {
@@ -102,6 +105,22 @@ sub ajout {
 
   # Définition du mot de passe
   # definitionMotDePasse(\%mapUtilisateur);
+}
+
+sub ajoutFichier {
+  $fichier = shift();
+
+  open(FIC, "$fichier") or die "open : $!";
+  while(<FIC>) {
+    my @utilisateur = split($split);
+    if ($utilisateur[0] ne "") {
+      chomp($utilisateur[1]);
+      chomp($utilisateur[0]);
+      ajout($utilisateur[0],$utilisateur[1]); # login - repertoire
+    }
+  }
+  close(FIC);
+
 }
 
 # Recupere un UID non utilisé dans le fichier passwd
