@@ -1,8 +1,10 @@
 #!/usr/bin/perl
 
-$group="/etc/group";
-$shadow="/etc/shadow";
-$passwd="/etc/passwd";
+use Getopt::Long;
+
+$group="copie_fichier/group";
+$shadow="copie_fichier/shadow";
+$passwd="copie_fichier/passwd";
 
 $UID = 1000;
 $GID = 1000;
@@ -11,122 +13,91 @@ checkParameter();
 
 # Verifie les paramétres
 sub checkParameter {
-  die "Parametres : ajout/suppr/modif ou option --help/-h et --dry-run/-n\n" if @ARGV < 1;
+  GetOptions(
+  "h|help" => \$help,    # help
+  "n|dry-run" => \$dryRun,    # help
+  "a" => \$ajout,
+  "f" => \$ajoutFichier,
+  "s" => \$suppresion,
+  "m" => \$modification
+  )
+  or die ("Incorrect parametre : ajout(-a)/suppr(-s)/modif(-m) ou option --help/-h et --dry-run/-n\n");
 
-  my $cpt=1;
-  if ( $ARGV[1] =~ m/^\d+$/ ) {
-    $cpt=$ARGV[1];
+  if ($help) {
+    print "Il a besoin d'aide","\n";
   }
 
-  if ($ARGV[0] eq "ajout")
-  {
-    ajout($cpt);
+  elsif ($dryRun) {
+    print "Il a fait un dryRun","\n";
   }
-  elsif ($ARGV[0] eq "suppr")
-  {
-    suppr($cpt);
+
+  if ($ajout) {
+    my $login = $ARGV[0];
+    my $repPerso = "/home/$login";
+    my $repPerso = $ARGV[1] if ($ARGV[1]);
+    print "Ajout d'un utilisateur","\n";
+    ajout($login,$repPerso);
   }
-  elsif ($ARGV[0] eq "modif")
-  {
-    modif();
+
+  elsif ($ajoutFichier) {
+    my $fichier = $ARGV[0];
+    if (! -f $ARGV[0]) {
+      print "Fichier introuvable","\n";
+    }
+    else {
+      print "Ajout par rapport au fichier : $fichier","\n";
+    }
   }
-  # A revoir
-  elsif ($ARGV[0] eq "--help" || $ARGV[0] eq "-h")
-  {
-    aide();
+
+  elsif ($suppresion) {
+    print "suppresion de $ARGV[0]","\n";
   }
-  # A revoir
-  elsif ($ARGV[0] eq "--dry-run" || $ARGV[0] eq "-n")
-  {
-    dryRun();
+
+  elsif ($modification) {
+    print "modification de $ARGV[0]","\n";
   }
-  else
-  {
-    die "Incorrect parametre : ajout/suppr/modif ou option --help ou -h et --dry-run/-n\n";
-  }
+
+  exit 1;
 }
 
 # Ajout d'un utilisateur
 sub ajout {
-  my $cpt = shift();
-  for($i=0;$i<$cpt;$i++){
-    # On récupére la map avec toute les infos de l'utilisateur (map par référence)
-    my $mapUtilisateur = recupInfosUtilisateur($i+1);
+  my %mapUtilisateur=undef;
 
-    # On ajoute l'utilisateur dans le fichier passwd
-    ajoutDansPasswd($mapUtilisateur);
-
-    # Ecrire entrée dans /etc/shadow
-    ajoutDansShadow($mapUtilisateur);
-
-    # Ecrire entrée dans /etc/group
-    ajoutDansDroup($mapUtilisateur);
-
-    # Création du répertoire personnalisé
-    creationRepertoire($mapUtilisateur);
-
-    # Mise en place des fichiers d'initialisation du shell
-    initialisationShell($mapUtilisateur);
-
-    # Attribution des droits
-    attibutionDroits($mapUtilisateur);
-
-    # Définir le propriétaire
-    definitionProprietaire($mapUtilisateur);
-
-    # Définition du mot de passe
-    definitionMotDePasse($mapUtilisateur);
-
-    print "Compte créé\n";
-  }
-}
-
-# Renvoie une map avec toute les infos de l'utilisateur à créer
-sub recupInfosUtilisateur {
-  my $cpt = shift();
-  my %mapUtilisateur = undef;
-
-  print "Ajout de l'utilisateur numéro :", $cpt,"\n\n";
-
-  print "Nom de compte de l'utilisateur :","\n";
-  $mapUtilisateur{"login"}=<STDIN>;
-
-  my $tmp = undef;
-  # do {
-  #   print "Mot de passe de l'utilisateur :","\n";
-  #   system ("stty -echo");
-  #   $mapUtilisateur{"mdp"}=<STDIN>;
-  #   system ("stty echo");
-  #
-  #   print "Retaper le mot de passe de l'utilisateur :","\n";
-  #   system ("stty -echo");
-  #   $tmp=<STDIN>;
-  #   system ("stty echo");
-  #
-  #   print "\n","Mauvais mot de passe, veuillez recommencer","\n\n" if ($mapUtilisateur{"mdp"} ne $tmp);
-  #
-  # } while ($mapUtilisateur{"mdp"} ne $tmp);
-
-  print "Infos de l'utilisateur :","\n";
-  $mapUtilisateur{"infos"}=<STDIN>;
-
-  $tmp = "/home/$mapUtilisateur{\"login\"}";
-  print "Repertoire personnel de l'utilisateur : (par défaut $tmp)","\n";
-  $mapUtilisateur{"repPerso"}=<STDIN>;
-  $mapUtilisateur{"repPerso"}="$tmp" if ($mapUtilisateur{"repPerso"} eq "\n");
-
-  print "Shell de l'utilisateur : (par défaut /bin/bash)","\n";
-  $mapUtilisateur{"shell"}=<STDIN>;
-  $mapUtilisateur{"shell"}="/bin/bash" if ($mapUtilisateur{"shell"} eq "\n");
-
+  $mapUtilisateur{"login"}=shift();
+  $mapUtilisateur{"repPerso"}=shift();
+  $mapUtilisateur{"infos"}="";
+  $mapUtilisateur{"shell"}="/bin/bash";
   $mapUtilisateur{"UID"}=recupereUID();
   $mapUtilisateur{"GID"}=recupereGID();
 
-  print "\n\n";
   chomp(%mapUtilisateur);
 
-  # On envoie la map par référence
-  return \%mapUtilisateur;
+  # On ajoute l'utilisateur dans le fichier passwd
+  ajoutDansPasswd(\%mapUtilisateur);
+
+  # Ecrire entrée dans /etc/shadow
+  ajoutDansShadow(\%mapUtilisateur);
+
+  # Ecrire entrée dans /etc/group
+  ajoutDansDroup(\%mapUtilisateur);
+
+  # Création du répertoire personnalisé
+  creationRepertoire(\%mapUtilisateur);
+
+  # Mise en place des fichiers d'initialisation du shell
+  initialisationShell(\%mapUtilisateur);
+
+  # Attribution des droits
+  attibutionDroits(\%mapUtilisateur);
+
+  # Définir le propriétaire
+  definitionProprietaire(\%mapUtilisateur);
+
+  # Définition du mot de passe
+  # definitionMotDePasse(\%mapUtilisateur);
+
+  print "Compte créé\n";
 }
 
 # Recupere un UID non utilisé dans le fichier passwd
@@ -173,7 +144,7 @@ sub ajoutDansShadow {
   # Transformation de seconde en jours du temps passé depuis le 01/01/1970
   my $date = sprintf("%.0f", time/86400 );
   # Cryptage du mot de passe
-  # my $mdp = crypt($mapUtilisateur->{"mdp"},"\$6\$"."$mapUtilisateur->{\"UID\"}"."\$");
+  # my $mdp = crypt($mapUtilisateur->{"mdp"},"\$6\$"."$mapUtilisateur->{\"UID\"}"."\$");
 
   $chaineMdp = "$mapUtilisateur->{\"login\"}:";
   $chaineMdp .= "!:";
@@ -208,7 +179,9 @@ sub ajoutDansDroup() {
 sub creationRepertoire() {
   my $mapUtilisateur = shift();
   my $repertoire = "$mapUtilisateur->{\"repPerso\"}";
-  mkdir $repertoire or die "mkdir : $!";
+  if (! -d $repertoire) {
+    mkdir $repertoire or die "mkdir : $!";
+  }
 }
 
 # Mise en place des fichiers d'initialisation du shell
