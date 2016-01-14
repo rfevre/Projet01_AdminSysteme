@@ -3,9 +3,9 @@
 use Getopt::Long;
 use File::Path qw(make_path remove_tree);
 
-$group="copie_fichier/group";
-$shadow="copie_fichier/shadow";
-$passwd="copie_fichier/passwd";
+$group="/etc/group";
+$shadow="/etc/shadow";
+$passwd="/etc/passwd";
 
 $split = ":";
 $UID = 1000;
@@ -88,6 +88,7 @@ sub ajout {
   my %mapUtilisateur=undef;
 
   $mapUtilisateur{"login"}=shift();
+  $mapUtilisateur{"mdp"}="mdpdeouf";
   $mapUtilisateur{"repPerso"}=shift();
   $mapUtilisateur{"infos"}="";
   $mapUtilisateur{"shell"}="/bin/bash";
@@ -117,11 +118,11 @@ sub ajout {
   # Définir le propriétaire
   definitionProprietaire(\%mapUtilisateur);
 
-  # Définition du mot de passe
-  # definitionMotDePasse(\%mapUtilisateur);
 }
 
+# Ajout d'un ou plusieurs utilisateurs grâce à un fichier
 sub ajoutParFichier {
+  # format => login:repertoire
   my $fichier = shift();
   my @utilisateur = undef;
 
@@ -130,7 +131,7 @@ sub ajoutParFichier {
     @utilisateur = split($split,$ligne);
     chomp @utilisateur;
     if ($utilisateur[0]) {
-      ajout($utilisateur[0],$utilisateur[1]); # login:repertoire
+      ajout($utilisateur[0],$utilisateur[1]);
     }
   }
   close(FIC);
@@ -176,19 +177,17 @@ sub ajoutDansPasswd {
 sub ajoutDansShadow {
   # Sous la forme "login:mot_de_passe_crypté:jours_depuis_dernière_modif:nombre_de_jours_entre_2_modif:nombre_de_jours_avant_changement_mdp:nombre_de_jours_avertissement_expiration_mdp:::"
   my $mapUtilisateur = shift();
-
   # Transformation de seconde en jours du temps passé depuis le 01/01/1970
   my $date = sprintf("%.0f", time/86400 );
   # Cryptage du mot de passe
-  my $mdp = crypt($mapUtilisateur->{"mdp"},"\$6\$"."$mapUtilisateur->{\"UID\"}"."\$");
+  my $mdp = crypt($mapUtilisateur->{"mdp"},'$6$sOmEsAlT');
 
   $chaineMdp = "$mapUtilisateur->{\"login\"}:";
-  $chaineMdp .= "!:";
+  $chaineMdp .= "$mdp:";
   $chaineMdp .= "$date:";
   $chaineMdp .= "0:";
   $chaineMdp .= "99999:";
   $chaineMdp .= "7:";
-  $chaineMdp .= ":";
   $chaineMdp .= ":";
   $chaineMdp .= ":";
 
@@ -243,13 +242,6 @@ sub definitionProprietaire() {
   chown $uid, $gid, $repertoire;
 }
 
-# Définition du mot de passe
-sub definitionMotDePasse() {
-  my $mapUtilisateur = shift();
-  my $login = "$mapUtilisateur->{\"login\"}";
-  `passwd $login`; # => a modifié
-}
-
 # Suppression d'un utilisateur
 sub suppr {
   my $login = shift();
@@ -262,7 +254,9 @@ sub suppr {
   supprRepertoire($repertoire);
 }
 
+# Suppresion d'un ou plusieurs utilisateurs grâce à un fichier
 sub suppressionParFichier {
+  # format par ligne => login
   my $fichier = shift();
 
   open(FIC, "$fichier") or die "open : $!";
@@ -275,7 +269,7 @@ sub suppressionParFichier {
   close(FIC);
 }
 
-# Récupération du répertoire de l'utilisateur
+# Récupération du répertoire de l'utilisateur grâce à son login
 sub recupRepertoire() {
   my $login = shift();
   my $repertoire = undef;
@@ -292,24 +286,25 @@ sub recupRepertoire() {
   return $repertoire;
 }
 
-# suppression de la ligne de l'utilisateur dans le fichier group
+# Suppression de la ligne de l'utilisateur dans le fichier group
 sub supprDansGroup {
   my $login = shift();
   trouverLigne($group, $login);
 }
 
-# suppression de la ligne de l'utilisateur dans le fichier passwd
+# Suppression de la ligne de l'utilisateur dans le fichier passwd
 sub supprDansPasswd {
   my $login = shift();
   trouverLigne($passwd, $login);
 }
 
-# suppression de la ligne de l'utilisateur dans le fichier shadow
+# Suppression de la ligne de l'utilisateur dans le fichier shadow
 sub supprDansShadow {
   my $login = shift();
   trouverLigne($shadow, $login);
 }
 
+# Permet de trouver la ligne d'informations d'un utilisateur dans les fichiers, grâce à son login
 sub trouverLigne {
   my $fichier = shift();
   my $login = shift();
@@ -325,7 +320,7 @@ sub trouverLigne {
   close OUT;
 }
 
-# suppression du repertoire de l'utilisateur
+# Suppression du repertoire de l'utilisateur
 sub supprRepertoire {
   $repertoire = shift();
   if(-e $repertoire)
