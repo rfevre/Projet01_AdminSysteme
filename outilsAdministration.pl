@@ -36,7 +36,7 @@ sub checkParameter {
   if ($ajout) {
     my $login = $ARGV[0];
     my $repPerso = "/home/$login";
-    my $repPerso = $ARGV[1] if ($ARGV[1]);
+    $repPerso = $ARGV[1] if ( $ARGV[1] );
     print "Ajout de l'utilisateur $login","\n";
     ajout($login,$repPerso);
     print "Compte utilisateur créé\n";
@@ -108,15 +108,15 @@ sub ajout {
 }
 
 sub ajoutFichier {
-  $fichier = shift();
+  my $fichier = shift();
+  my @utilisateur = undef;
 
   open(FIC, "$fichier") or die "open : $!";
-  while(<FIC>) {
-    my @utilisateur = split($split);
+  foreach $ligne (<FIC>) {
+    @utilisateur = split($split,$ligne);
+    chomp @utilisateur;
     if ($utilisateur[0] ne "") {
-      chomp($utilisateur[1]);
-      chomp($utilisateur[0]);
-      ajout($utilisateur[0],$utilisateur[1]); # login - repertoire
+      ajout($utilisateur[0],$utilisateur[1]); # login:repertoire
     }
   }
   close(FIC);

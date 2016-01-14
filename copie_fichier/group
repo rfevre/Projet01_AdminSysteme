@@ -49,7 +49,6 @@ Debian-exim:x:109:
 messagebus:x:110:
 mlocate:x:111:
 ssh:x:112:
-fevrer:x:1000:
 scanner:x:113:saned
 colord:x:114:
 saned:x:115:
