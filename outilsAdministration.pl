@@ -19,14 +19,16 @@ sub checkParameter {
   "h|help" => \$help,
   "n|dry-run" => \$dryRun,
   "a" => \$ajout,
-  "f" => \$ajoutFichier,
-  "s" => \$suppresion,
+  "af" => \$ajoutParFichier,
+  "s" => \$suppression,
+  "sf" => \$suppressionParFichier,
   "m" => \$modification
   )
   or die ("Incorrect parametre : ajout(-a)/suppr(-s)/modif(-m) ou option --help/-h et --dry-run/-n\n");
 
   if ($help) {
     print "Il a besoin d'aide","\n";
+    exit 1;
   }
 
   elsif ($dryRun) {
@@ -42,23 +44,35 @@ sub checkParameter {
     print "Compte utilisateur créé\n";
   }
 
-  elsif ($ajoutFichier) {
+  elsif ($ajoutParFichier) {
     my $fichier = $ARGV[0];
     if (! -f $ARGV[0]) {
       print "Fichier introuvable","\n";
     }
     else {
       print "Ajout par rapport au fichier : $fichier","\n";
-      ajoutFichier($fichier);
+      ajoutParFichier($fichier);
     }
     print "Compte utilisateurs créé\n";
   }
 
-  elsif ($suppresion) {
+  elsif ($suppression) {
     my $login = $ARGV[0];
-    print "Suppresion de $login","\n";
+    print "suppression de $login","\n";
     suppr($login);
     print "Compte supprimé\n";
+  }
+
+  elsif ($suppressionParFichier) {
+    my $fichier = $ARGV[0];
+    if (! -f $ARGV[0]) {
+      print "Fichier introuvable","\n";
+    }
+    else {
+      print "Suppression par rapport au fichier : $fichier","\n";
+      suppressionParFichier($fichier);
+    }
+    print "Compte utilisateurs supprimé\n";
   }
 
   elsif ($modification) {
@@ -107,7 +121,7 @@ sub ajout {
   # definitionMotDePasse(\%mapUtilisateur);
 }
 
-sub ajoutFichier {
+sub ajoutParFichier {
   my $fichier = shift();
   my @utilisateur = undef;
 
@@ -115,12 +129,11 @@ sub ajoutFichier {
   foreach $ligne (<FIC>) {
     @utilisateur = split($split,$ligne);
     chomp @utilisateur;
-    if ($utilisateur[0] ne "") {
+    if ($utilisateur[0]) {
       ajout($utilisateur[0],$utilisateur[1]); # login:repertoire
     }
   }
   close(FIC);
-
 }
 
 # Recupere un UID non utilisé dans le fichier passwd
@@ -167,7 +180,7 @@ sub ajoutDansShadow {
   # Transformation de seconde en jours du temps passé depuis le 01/01/1970
   my $date = sprintf("%.0f", time/86400 );
   # Cryptage du mot de passe
-  # my $mdp = crypt($mapUtilisateur->{"mdp"},"\$6\$"."$mapUtilisateur->{\"UID\"}"."\$");
+  my $mdp = crypt($mapUtilisateur->{"mdp"},"\$6\$"."$mapUtilisateur->{\"UID\"}"."\$");
 
   $chaineMdp = "$mapUtilisateur->{\"login\"}:";
   $chaineMdp .= "!:";
@@ -249,6 +262,19 @@ sub suppr {
   supprRepertoire($repertoire);
 }
 
+sub suppressionParFichier {
+  my $fichier = shift();
+
+  open(FIC, "$fichier") or die "open : $!";
+  foreach $login (<FIC>) {
+    chomp $login;
+    if ($login) {
+      suppr($login);
+    }
+  }
+  close(FIC);
+}
+
 # Récupération du répertoire de l'utilisateur
 sub recupRepertoire() {
   my $login = shift();
@@ -266,19 +292,19 @@ sub recupRepertoire() {
   return $repertoire;
 }
 
-# Suppresion de la ligne de l'utilisateur dans le fichier group
+# suppression de la ligne de l'utilisateur dans le fichier group
 sub supprDansGroup {
   my $login = shift();
   trouverLigne($group, $login);
 }
 
-# Suppresion de la ligne de l'utilisateur dans le fichier passwd
+# suppression de la ligne de l'utilisateur dans le fichier passwd
 sub supprDansPasswd {
   my $login = shift();
   trouverLigne($passwd, $login);
 }
 
-# Suppresion de la ligne de l'utilisateur dans le fichier shadow
+# suppression de la ligne de l'utilisateur dans le fichier shadow
 sub supprDansShadow {
   my $login = shift();
   trouverLigne($shadow, $login);
@@ -299,7 +325,7 @@ sub trouverLigne {
   close OUT;
 }
 
-# Suppresion du repertoire de l'utilisateur
+# suppression du repertoire de l'utilisateur
 sub supprRepertoire {
   $repertoire = shift();
   if(-e $repertoire)
