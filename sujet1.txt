@@ -1,0 +1,117 @@
+			 Administration systeme - Projet 1 - janvier 2016
+------------------------------------------------------------------------------
+
+SUJET
+-----
+
+Pour votre premier projet vous allez devoir écrire des outils permettant
+d'administrer les utilisateurs de votre machine. Vous devrez également écrire
+les procédures associées à l'utilisation de ces outils.
+
+Vous devez être capable :
+
+1- d'ajouter un (des) utilisateur(s)
+
+2- de supprimer un (des) utilisateur(s)
+
+3- de modifier les données d'un (de plusieurs) utilisateur(s). Seules les
+   modifications suivantes devront être prise en compte :
+
+   + mot de passe 
+
+   + répertoire de travail
+
+   + langage de commande
+
+CONTRAINTES
+-----------
+
+- Les commandes que vous allez construire doivent être écrites dans un des
+  langages suivants:
+
+  + shell (vos fichiers devront avoir comme extension .sh)
+
+  + perl (vos fichiers devront avoir comme extension .pl)
+
+  + python (vos fichiers devront avoir comme extension .py)
+
+  + C
+
+- Vos commandes doivent accepter l'option -n (ou --dry-run) qui permet de voir
+  ce que la commande s'apprête à faire sans le faire effectivement.
+
+- Vos commandes doivent être utilisables en ligne de commande sans
+  intervention de l'utilisateur. Elles ne doivent en aucun cas n'être
+  qu'interactives. Elles ne doivent en aucun cas être graphique.
+
+- Vos commandes devront pouvoir créer des utilisateurs en utilisant
+  "backend". Dans un premier temps, ces backends doivent être :
+    - l'appel des script debian de création d'utilisateurs,
+    - la modification directe des fichiers passwd, shadow et group
+
+DOCUMENTATIONS
+--------------
+
+- passwd(5)
+
+- shadow(5)
+
+- group(5)
+
+- perlfunc(5) : le langage PERL offre en standard une fonction crypt
+  permettant de crypter un mot de passe UNIX.
+
+- crypt(3)
+
+- pwgen(1)
+
+- Toutes les ressources présentes sur votre machine
+
+- http://www.google.com et le reste des ressources présentes sur les machines
+  de l'internet :-)
+
+REMARQUES
+---------
+
+- Vous ne pouvez pas travailler directement avec les fichiers passwd, shadow
+  et group de votre machine. Travaillez dans un premier temps sur des copies
+  de ces fichiers.
+
+- Pensez aux valeurs par défaut que vos commandes peuvent utiliser (modèle de
+  nom pour le répertoire principal d'un utilisateur, emplacement des fichiers
+  passwd, group et shadow). Factorisez éventuellement ces informations via des
+  fichiers de configuration communs à vos commandes.
+
+- Pensez aux déplacements physique de répertoire quand vous modifiez les
+  données d'un utilisateur : changer le fichier passwd ne suffit pas !
+
+- Méfiez-vous des noms de commandes trop cryptiques et trop proche de commande
+  unix existantes.
+
+- documentez vos commandes! (option --help ou -h)
+
+COMPTE-RENDU
+------------
+
+- Faites un compte-rendu en html que vous placez dans un répertoire nommé
+  public_html/adminsys dans votre repertoire principal. 
+
+- Nommez ce fichier projet1.html.
+
+- Décrivez dans ce document les procédures associées à vos commandes (comment
+  ajouter/supprimer/modifier un ou des utilisateurs).
+
+- Expliquez, justifiez et argumentez rapidement, vos choix en terme de :
+
+  + syntaxe d'utilisation
+
+  + fonctionnement
+
+  + découpage fonctionnel
+
+  + traitement (ou non) des erreurs
+
+  + etc.
+
+------------------------------------------------------------------------------
+
