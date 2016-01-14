@@ -1,5 +1,11 @@
 #!/usr/bin/perl
 
-  my $mdp = crypt($mapUtilisateur->{"mdp"},"\$6\$"."saltsalt"."\$");
-
-print $mdp,"\n";
+open(FIC, "copie_fichier/passwd") or die "open : $!";
+while(<FIC>) {
+  my @liste = split(':');
+  if ($liste[0] eq "fevrer") {
+    print $liste[5],"\n";
+    last;
+  }
+}
+close(FIC);

@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use Getopt::Long;
+use File::Path qw(make_path remove_tree);
 
 $group="copie_fichier/group";
 $shadow="copie_fichier/shadow";
@@ -191,7 +192,7 @@ sub creationRepertoire() {
 sub initialisationShell() {
   my $mapUtilisateur = shift();
   my $repertoire = "$mapUtilisateur->{\"repPerso\"}";
-  `cp -v /etc/skel/.* $repertoire`;
+  `cp -v /etc/skel/.bash* $repertoire`;
 }
 
 # Attribution des droits
@@ -219,39 +220,73 @@ sub definitionMotDePasse() {
 
 # Suppression d'un utilisateur
 sub suppr {
-    my $login = shift();
-    my $repertoire = recupRepertoire();
+  my $login = shift();
+  my $repertoire = recupRepertoire($login);
 
-    supprDansGroup($login);
-    supprDansPasswd($login);
-    supprDansShadow($login);
-    supprRepertoire($repertoire);
-  }
+  supprDansGroup($login);
+  supprDansPasswd($login);
+  supprDansShadow($login);
+
+  supprRepertoire($repertoire);
 }
 
 # Récupération du répertoire de l'utilisateur
 sub recupRepertoire() {
+  my $login = shift();
+  my $repertoire = undef;
 
+  open(FIC, "$passwd") or die "open : $!";
+  while(<FIC>) {
+    my @liste = split(':');
+    if ($liste[0] eq $login) {
+      $repertoire = $liste[5];
+      last;
+    }
+  }
+  close(FIC);
+  return $repertoire;
 }
 
 # Suppresion de la ligne de l'utilisateur dans le fichier group
 sub supprDansGroup {
-
+  my $login = shift();
+  trouverLigne($group, $login);
 }
 
 # Suppresion de la ligne de l'utilisateur dans le fichier passwd
 sub supprDansPasswd {
-
+  my $login = shift();
+  trouverLigne($passwd, $login);
 }
 
 # Suppresion de la ligne de l'utilisateur dans le fichier shadow
 sub supprDansShadow {
+  my $login = shift();
+  trouverLigne($shadow, $login);
+}
 
+sub trouverLigne {
+  my $fichier = shift();
+  my $login = shift();
+
+  open IN, '<', $fichier or die "open : $!";
+  my @contents = <IN>;
+  close IN;
+
+  @contents = grep !/^$login/, @contents;
+
+  open OUT, '>', $fichier or die "close : $!";
+  print OUT @contents;
+  close OUT;
 }
 
 # Suppresion du repertoire de l'utilisateur
 sub supprRepertoire {
-
+  $repertoire = shift();
+  if(-e $repertoire)
+  {
+    remove_tree($repertoire) or die "remove_tree : $!";
+  }
 }
 
 # Modification d'un utilisateur
