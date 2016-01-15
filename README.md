@@ -64,7 +64,7 @@
 
   Pour modifier un ou des utilisateurs grâce à un fichier :
 
-  (format du fichier par ligne : *"utilisateur"*;*mot_de_passe:repertoire_de_travail:shell* )
+  (format du fichier par ligne : *"utilisateur"*;*"mot_de_passe:repertoire_de_travail:shell"* )
 
     - `perl outilsAdministration.pl -mf <chemin_fichier>`
 
