@@ -2,7 +2,7 @@ NOM
   adminSys  - Gestion utilisateur(s)
 
 SYNOPSIS
-  perl adminSys [options] ...
+  perl adminSys.pl [options] ...
 
 DESCRIPTION
   Cette commande permet de créer/supprimer/modifier un ou plusieurs

@@ -1,5 +1,5 @@
 # Projet01 Administration Systeme
-## FEVRE Rémy
+## Par FEVRE Rémy - DA2I 2015/2016
 
 ---
 
@@ -27,33 +27,33 @@
 
   Pour ajouter un utilisateur en ligne de commande :
 
-    - `perl outilsAdministration.pl -a <login_utilisateur> <repertoire_de_travail>`
+    - `perl adminSys.pl -a <login_utilisateur> <repertoire_de_travail>`
 
-    - `perl outilsAdministration.pl --ajouter <login_utilisateur> <repertoire_de_travail>`
+    - `perl adminSys.pl --ajouter <login_utilisateur> <repertoire_de_travail>`
 
   Pour ajouter un ou des utilisateurs grâce à un fichier :
 
   (format du fichier par ligne : *"utilisateur"*:*"repertoire_de_travail"*)
 
-    - `perl outilsAdministration.pl -af <chemin_fichier>`
+    - `perl adminSys.pl -af <chemin_fichier>`
 
-    - `perl outilsAdministration.pl --ajouterParFichier <chemin_fichier>`
+    - `perl adminSys.pl --ajouterParFichier <chemin_fichier>`
 
 - #### Supprimer un utilisateur :
 
   Pour supprimer un utilisateur en ligne de commande :
 
-    - `perl outilsAdministration.pl -s <login_utilisateur>`
+    - `perl adminSys.pl -s <login_utilisateur>`
 
-    - `perl outilsAdministration.pl --supprimer <login_utilisateur>`
+    - `perl adminSys.pl --supprimer <login_utilisateur>`
 
   Pour supprimer un ou des utilisateurs grâce à un fichier :
 
   (format du fichier par ligne : *"utilisateur"*)
 
-    - `perl outilsAdministration.pl -sf <chemin_fichier>`
+    - `perl adminSys.pl -sf <chemin_fichier>`
 
-    - `perl outilsAdministration.pl --supprimerParFichier <chemin_fichier>`
+    - `perl adminSys.pl --supprimerParFichier <chemin_fichier>`
 
 - #### Modifier un utilisateur :
 
@@ -61,17 +61,17 @@
 
   Pour modifier un utilisateur en ligne de commande :
 
-    - `perl outilsAdministration.pl -m <login_utilisateur> <modification>`
+    - `perl adminSys.pl -m <login_utilisateur> <modification>`
 
-    - `perl outilsAdministration.pl --modifier <login_utilisateur> <modification>`
+    - `perl adminSys.pl --modifier <login_utilisateur> <modification>`
 
   Pour modifier un ou des utilisateurs grâce à un fichier :
 
   (format du fichier par ligne : *"utilisateur"*;*"mot_de_passe:repertoire_de_travail:shell"* )
 
-    - `perl outilsAdministration.pl -mf <chemin_fichier>`
+    - `perl adminSys.pl -mf <chemin_fichier>`
 
-    - `perl outilsAdministration.pl --modifierParFichier <chemin_fichier>`
+    - `perl adminSys.pl --modifierParFichier <chemin_fichier>`
 
 ---
 
