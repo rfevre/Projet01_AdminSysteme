@@ -7,6 +7,8 @@ $group="/etc/group";
 $shadow="/etc/shadow";
 $passwd="/etc/passwd";
 
+$mdpDefaut = "test";
+$shellDefaut = "/bin/bash";
 $split = ":";
 $UID = 1000;
 $GID = 1000;
@@ -76,8 +78,12 @@ sub checkParameter {
   }
 
   elsif ($modification) {
-    my $login = $ARGV[0];
-    print "modification de $login","\n";
+    if ($ARGV[0] && $ARGV[1]) {
+      modif($ARGV[0],$ARGV[1]) if ($ARGV[0] && $ARGV[1]);
+    }
+    else {
+      print "Nombre d'arguments incorrect","\n";
+    }
   }
 
   exit 1;
@@ -88,10 +94,10 @@ sub ajout {
   my %mapUtilisateur=undef;
 
   $mapUtilisateur{"login"}=shift();
-  $mapUtilisateur{"mdp"}="mdpdeouf";
+  $mapUtilisateur{"mdp"}=$mdpDefaut;
   $mapUtilisateur{"repPerso"}=shift();
   $mapUtilisateur{"infos"}="";
-  $mapUtilisateur{"shell"}="/bin/bash";
+  $mapUtilisateur{"shell"}=$shellDefaut;
   $mapUtilisateur{"UID"}=recupereUID();
   $mapUtilisateur{"GID"}=recupereGID();
 
@@ -132,9 +138,9 @@ sub ajoutParFichier {
   foreach $ligne (<FIC>) {
     @utilisateur = split($split,$ligne);
     chomp @utilisateur;
-    login = $utilisateur[0];
-    repPerso = "/home/$login";
-    repPerso = $utilisateur[1] if ($utilisateur[1]);
+    $login = $utilisateur[0];
+    $repPerso = "/home/$login";
+    $repPerso = $utilisateur[1] if ($utilisateur[1]);
     if ($login) {
       ajout($login,$repPerso);
     }
@@ -336,7 +342,44 @@ sub supprRepertoire {
 
 # Modification d'un utilisateur
 sub modif {
+  my $login = shift();
+  my @ligne = split($split,shift());
+  my $mdp = $ligne[0];
+  my $repPerso = $ligne[1];
+  my $shell = $ligne[2];
 
+  print "modification de l'utilisateur : ". $login,"\n";
+  print "mdp : ". $mdp,"\n";
+  print "repPerso : ". $repPerso,"\n";
+  print "shell : ". $shell,"\n";
+
+  modifMdp($login,$mdp) if ($mdp);
+  modifRepPerso($login,$repPerso) if ($repPerso);
+  modifShell($login,$shell) if ($shell);
+}
+
+# Modification du mot de passe d'un utilisateur
+sub modifMdp {
+  my $login = shift();
+  my $mdp = shift();
+
+  # On recherche la ligne dans le fichier shadow et on la modifie
+}
+
+# Modification du repertoire Perso d'un utilisateur
+sub modifRepPerso {
+  my $login = shift();
+  my $repPerso = shift();
+
+  # On recherche la ligne dans le fichier passwd et on la modifie
+}
+
+# Modification du shell d'un utilisateur
+sub modifShell {
+  my $login = shift();
+  my $shell = shift();
+
+  # On recherche la ligne dans le fichier passwd et on la modifie
 }
 
 # Aide sur les commandes
