@@ -24,7 +24,8 @@ sub checkParameter {
   "af" => \$ajoutParFichier,
   "s" => \$suppression,
   "sf" => \$suppressionParFichier,
-  "m" => \$modification
+  "m" => \$modification,
+  "mf" => \$modificationParFichier
   )
   or die ("Incorrect parametre : ajout(-a)/suppr(-s)/modif(-m) ou option --help/-h et --dry-run/-n\n");
 
@@ -54,8 +55,8 @@ sub checkParameter {
     else {
       print "Ajout par rapport au fichier : $fichier","\n";
       ajoutParFichier($fichier);
+      print "Compte utilisateurs créé\n";
     }
-    print "Compte utilisateurs créé\n";
   }
 
   elsif ($suppression) {
@@ -73,16 +74,29 @@ sub checkParameter {
     else {
       print "Suppression par rapport au fichier : $fichier","\n";
       suppressionParFichier($fichier);
+      print "Compte utilisateurs supprimé","\n";
     }
-    print "Compte utilisateurs supprimé\n";
   }
 
   elsif ($modification) {
     if ($ARGV[0] && $ARGV[1]) {
       modif($ARGV[0],$ARGV[1]) if ($ARGV[0] && $ARGV[1]);
+      print "Compte utilisateur modifié\n";
     }
     else {
       print "Nombre d'arguments incorrect","\n";
+    }
+  }
+
+  elsif ($modificationParFichier) {
+    my $fichier = $ARGV[0];
+    if (! -f $ARGV[0]) {
+      print "Fichier introuvable","\n";
+    }
+    else {
+      print "Modification par rapport au fichier : $fichier","\n";
+      modificationParFichier($fichier);
+      print "Compte utilisateurs modifié","\n";
     }
   }
 
@@ -348,38 +362,79 @@ sub modif {
   my $repPerso = $ligne[1];
   my $shell = $ligne[2];
 
-  print "modification de l'utilisateur : ". $login,"\n";
-  print "mdp : ". $mdp,"\n";
-  print "repPerso : ". $repPerso,"\n";
-  print "shell : ". $shell,"\n";
+  modifShadow($login,$mdp) if ($mdp);
+  modifPasswd($login,$repPerso,$shell) if ($repPerso || $shell);
+}
 
-  modifMdp($login,$mdp) if ($mdp);
-  modifRepPerso($login,$repPerso) if ($repPerso);
-  modifShell($login,$shell) if ($shell);
+# Modification d'un ou plusieurs utilisateurs grâce à un fichier
+sub modificationParFichier {
+  # format => login:repertoire
+  my $fichier = shift();
+  my $login = undef;
+  my $ligne = undef;
+  my @utilisateur = undef;
+
+  open(FIC, "$fichier") or die "open : $!";
+  foreach $ligne (<FIC>) {
+    @utilisateur = split(" ",$ligne);
+    chomp @utilisateur;
+    $login = $utilisateur[0];
+    $ligne = $utilisateur[1];
+    if ($login && $ligne) {
+      modif($login,$ligne);
+    }
+  }
+  close(FIC);
 }
 
 # Modification du mot de passe d'un utilisateur
-sub modifMdp {
+sub modifShadow {
   my $login = shift();
   my $mdp = shift();
 
   # On recherche la ligne dans le fichier shadow et on la modifie
+  open IN, '<', $shadow or die "open : $!";
+  my @contents = <IN>;
+  close IN;
+
+  @ligne = grep /^$login/, @contents;
+  @ligne = split($split,$ligne[0]);
+  $ligne[1] = crypt($mdp,'$6$sOmEsAlT');
+
+  $ligne = join(":",@ligne);
+
+  @contents = grep !/^$login/, @contents;
+  push (@contents,$ligne);
+
+  open OUT, '>', $shadow or die "close : $!";
+  print OUT @contents;
+  close OUT;
 }
 
 # Modification du repertoire Perso d'un utilisateur
-sub modifRepPerso {
+sub modifPasswd {
   my $login = shift();
   my $repPerso = shift();
-
-  # On recherche la ligne dans le fichier passwd et on la modifie
-}
-
-# Modification du shell d'un utilisateur
-sub modifShell {
-  my $login = shift();
   my $shell = shift();
 
   # On recherche la ligne dans le fichier passwd et on la modifie
+  open IN, '<', $passwd or die "open : $!";
+  my @contents = <IN>;
+  close IN;
+
+  @ligne = grep /^$login/, @contents;
+  @ligne = split($split,$ligne[0]);
+  $ligne[5] = $repPerso if ($repPerso);
+  $ligne[6] = $shell if ($shell);
+
+  $ligne = join(":",@ligne);
+
+  @contents = grep !/^$login/, @contents;
+  push (@contents,$ligne);
+
+  open OUT, '>', $passwd or die "close : $!";
+  print OUT @contents;
+  close OUT;
 }
 
 # Aide sur les commandes
