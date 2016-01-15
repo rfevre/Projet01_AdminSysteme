@@ -1,1 +1,1 @@
-root chouette:/home/caca:/bin/bash/bash/perl/boum
+root;chouette:/home/caca:/bin/bash/bash/perl/boum

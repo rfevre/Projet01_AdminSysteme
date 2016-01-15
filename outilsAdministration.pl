@@ -376,7 +376,7 @@ sub modificationParFichier {
 
   open(FIC, "$fichier") or die "open : $!";
   foreach $ligne (<FIC>) {
-    @utilisateur = split(" ",$ligne);
+    @utilisateur = split(";",$ligne);
     chomp @utilisateur;
     $login = $utilisateur[0];
     $ligne = $utilisateur[1];
