@@ -3,15 +3,15 @@
 use Getopt::Long;
 use File::Path qw(make_path remove_tree);
 
-$group="/etc/group";
-$shadow="/etc/shadow";
-$passwd="/etc/passwd";
+$group="/etc/group"; # Chemin du fichier group
+$shadow="/etc/shadow"; # Chemin du fichier shadow
+$passwd="/etc/passwd"; # Chemin du fichier passwd
 
-$mdpDefaut = "test";
-$shellDefaut = "/bin/bash";
-$split = ":";
-$UID = 1000;
-$GID = 1000;
+$mdpDefaut = "test"; # Mot de passe à donner au utilisateurs
+$shellDefaut = "/bin/bash"; # Shell à utiliser par défaut
+$split = ":"; # Split par défaut
+$UID = 1000; # UID minimum
+$GID = 1000; # GID minimum
 
 checkParameter();
 
@@ -20,12 +20,12 @@ sub checkParameter {
   GetOptions(
   "h|help" => \$help,
   "n|dry-run" => \$dryRun,
-  "a" => \$ajout,
-  "af" => \$ajoutParFichier,
-  "s" => \$suppression,
-  "sf" => \$suppressionParFichier,
-  "m" => \$modification,
-  "mf" => \$modificationParFichier
+  "a|ajout" => \$ajout,
+  "af|ajoutParFichier" => \$ajoutParFichier,
+  "s|suppression" => \$suppression,
+  "sf|suppressionParFichier" => \$suppressionParFichier,
+  "m|modification" => \$modification,
+  "mf|modificationParFichier" => \$modificationParFichier
   )
   or die ("Incorrect parametre : ajout(-a)/suppr(-s)/modif(-m) ou option --help/-h et --dry-run/-n\n");
 
