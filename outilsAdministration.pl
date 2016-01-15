@@ -20,12 +20,12 @@ sub checkParameter {
   GetOptions(
   "h|help" => \$help,
   "n|dry-run" => \$dryRun,
-  "a|ajout" => \$ajout,
-  "af|ajoutParFichier" => \$ajoutParFichier,
-  "s|suppression" => \$suppression,
-  "sf|suppressionParFichier" => \$suppressionParFichier,
-  "m|modification" => \$modification,
-  "mf|modificationParFichier" => \$modificationParFichier
+  "a|ajouter" => \$ajout,
+  "af|ajouterParFichier" => \$ajoutParFichier,
+  "s|supprimer" => \$suppression,
+  "sf|supprimerParFichier" => \$suppressionParFichier,
+  "m|modifier" => \$modification,
+  "mf|modifierParFichier" => \$modificationParFichier
   )
   or die ("Incorrect parametre : ajout(-a)/suppr(-s)/modif(-m) ou option --help/-h et --dry-run/-n\n");
 
