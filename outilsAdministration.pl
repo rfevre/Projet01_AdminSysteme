@@ -125,13 +125,18 @@ sub ajoutParFichier {
   # format => login:repertoire
   my $fichier = shift();
   my @utilisateur = undef;
+  my $login = undef;
+  my $repPerso = undef;
 
   open(FIC, "$fichier") or die "open : $!";
   foreach $ligne (<FIC>) {
     @utilisateur = split($split,$ligne);
     chomp @utilisateur;
-    if ($utilisateur[0]) {
-      ajout($utilisateur[0],$utilisateur[1]);
+    login = $utilisateur[0];
+    repPerso = "/home/$login";
+    repPerso = $utilisateur[1] if ($utilisateur[1]);
+    if ($login) {
+      ajout($login,$repPerso);
     }
   }
   close(FIC);
