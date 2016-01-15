@@ -5,12 +5,15 @@
 
 ### Fonctionnalités :
 
-- [x] Ajouter un ou des utilisateurs
+- [x] Ajouter utilisateur
+  - [x] Par ligne de commande
+  - [x] Par un fichier
 - [x] Supprimer un ou des utilisateurs
-- [x] Modifier les données des utilisateurs
-  - [x] Mot de passe
-  - [x] Répertoire de travail
-  - [x] Langage de commande
+  - [x] Par ligne de commande
+  - [x] Par un fichier
+- [x] Modifier les données des utilisateurs (mot de passe, repertoire de travail, langage de commande)
+  - [x] Par ligne de commande
+  - [x] Par un fichier
 - [ ] Commande help
 - [ ] Commande dry-run
 
