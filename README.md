@@ -11,6 +11,8 @@
   - [x] Mot de passe
   - [x] Répertoire de travail
   - [x] Langage de commande
+- [ ] Commande help
+- [ ] Commande dry-run
 
 ---
 
