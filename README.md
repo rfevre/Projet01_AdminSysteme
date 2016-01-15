@@ -7,10 +7,10 @@
 
 - [x] Ajouter un ou des utilisateurs
 - [x] Supprimer un ou des utilisateurs
-- [ ] Modifier les données des utilisateurs
-  - [ ] Mot de passe
-  - [ ] Répertoire de travail
-  - [ ] Langage de commande
+- [x] Modifier les données des utilisateurs
+  - [x] Mot de passe
+  - [x] Répertoire de travail
+  - [x] Langage de commande
 
 ---
 
