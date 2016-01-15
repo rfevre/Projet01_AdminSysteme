@@ -54,7 +54,7 @@
 
 - #### Modifier un utilisateur :
 
-  Le format de la chaine "modification" est le suivant "mot_de_passe:repertoire_de_travail:shell". Les champs ne sont pas tous obligatoires, il est possible de rentrer simplement un mot de passe et de laisser les autres champs vide ("mot_de_passe::").
+  Le format du paramétre "modification" est le suivant "mot_de_passe:repertoire_de_travail:shell". Les champs ne sont pas tous obligatoires, il est possible de rentrer simplement un mot de passe et de laisser les autres champs vide ("mot_de_passe::").
 
   Pour modifier un utilisateur en ligne de commande :
 
