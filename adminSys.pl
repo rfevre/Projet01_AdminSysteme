@@ -6,6 +6,7 @@ use File::Path qw(make_path remove_tree);
 $group="/etc/group"; # Chemin du fichier group
 $shadow="/etc/shadow"; # Chemin du fichier shadow
 $passwd="/etc/passwd"; # Chemin du fichier passwd
+$fichierHelp="./help.txt"; # Chemin du fichier d'aide
 
 $mdpDefaut = "test"; # Mot de passe à donner au utilisateurs
 $shellDefaut = "/bin/bash"; # Shell à utiliser par défaut
@@ -27,15 +28,16 @@ sub checkParameter {
   "m|modifier" => \$modification,
   "mf|modifierParFichier" => \$modificationParFichier
   )
-  or die ("Incorrect parametre : ajout(-a)/suppr(-s)/modif(-m) ou option --help/-h et --dry-run/-n\n");
+  or die ("Parametre(s) incorrect : Pour plus d'informations, lire le fichier README.md\n");
 
   if ($help) {
-    print "Il a besoin d'aide","\n";
+    aide();
     exit 1;
   }
 
   elsif ($dryRun) {
-    print "Il a fait un dryRun","\n";
+    dryRun(\@ARGV);
+    exit 1;
   }
 
   if ($ajout) {
@@ -400,6 +402,7 @@ sub modifShadow {
   @ligne = grep /^$login/, @contents;
   @ligne = split($split,$ligne[0]);
   $ligne[1] = crypt($mdp,'$6$sOmEsAlT');
+  $ligne[2] = sprintf("%.0f", time/86400 );
 
   $ligne = join(":",@ligne);
 
@@ -439,10 +442,22 @@ sub modifPasswd {
 
 # Aide sur les commandes
 sub aide {
-
+  open (FIC,"$fichierHelp") or die "open : $!";
+  foreach $ligne (<FIC>) {
+    print $ligne;
+  }
 }
 
-# Permet de voir ce que la commande s'apprête à faire
+# Affiche une courte description de(s) (l')option(s) passé en paramètre(s).
 sub dryRun {
-
+  my $tabCommandes = shift();
+  foreach $option (@{$tabCommandes}) {
+    print $option," : Ajout d'un utilisateur","\n" if ($option eq "a" || $option eq "ajouter");
+    print $option," : Ajout d'un ou plusieurs utilisateur(s) par un fichier","\n" if ($option eq "af" || $option eq "ajouterParFichier");
+    print $option," : Suppression d'un utilisateur","\n" if ($option eq "s" || $option eq "supprimer");
+    print $option," : Suppression d'un ou plusieurs utilisateur(s) par un fichier","\n" if ($option eq "sf" || $option eq "supprimerParFichier");
+    print $option," : Modification d'un utilisateur","\n" if ($option eq "m" || $option eq "modifier");
+    print $option," : Modification d'un ou plusieurs utilisateur(s) par un fichier","\n" if ($option eq "mf" || $option eq "modifierParFichier");
+    print $option," : Permet d'obtenir de l'aide","\n" if ($option eq "h" || $option eq "help");
+  }
 }

@@ -1,0 +1,44 @@
+NOM
+  adminSys  - Gestion utilisateur(s)
+
+SYNOPSIS
+  perl adminSys [options] ...
+
+DESCRIPTION
+  Cette commande permet de créer/supprimer/modifier un ou plusieurs
+  utilisateur(s).
+
+OPTIONS
+  -h | --help
+      Permet d'obtenir de l'aide.
+
+  -n | dry-run OPTION(S)
+      Affiche une courte description de(s) (l')option(s) passé en paramètre(s).
+
+  -a | --ajouter LOGIN_UTILISATEUR REPERTOIRE_DE_TRAVAIL
+      Ajoute un utilisateur
+      (REPERTOIRE_DE_TRAVAIL par défaut : /home/LOGIN_UTILISATEUR).
+
+  -af | --ajouterParFichier CHEMIN_FICHIER
+      Ajoute un ou plusieurs utilisateur(s) grâce à un fichier
+      de format => "login":"repertoire_de_travail"
+
+  -s | --supprimer LOGIN_UTILISATEUR
+      Supprime un utilisateur
+
+  -sf | --supprimerParFichier CHEMIN_FICHIER
+      Supprime un ou plusieurs utilisateur(s) grâce à un fichier
+      de format => "login"
+
+  -m | -modifier LOGIN_UTILISATEUR MODIFICATION
+      Modifie un utilisateur, l'option MODIFICATION doit respecter
+      ce format => "mot_de_passe:repertoire_de_travail:shell"
+      (Tout les champs ne sont pas obligatoires)
+
+  -mf | --modifierParFichier CHEMIN_FICHIER
+      Modifie un ou plusieurs utilisateur(s) grâce à un fichier
+      de format => "login";"mot_de_passe:repertoire_de_travail:shell"
+      (Tout les champs ne sont pas obligatoires)
+
+AUTRE
+  Lire le fichier "projet1.html" pour plus d'informations.

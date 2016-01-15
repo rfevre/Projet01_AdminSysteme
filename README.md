@@ -14,8 +14,8 @@
 - [x] Modifier les données des utilisateurs (mot de passe, repertoire de travail, langage de commande)
   - [x] Par ligne de commande
   - [x] Par un fichier
-- [ ] Commande help
-- [ ] Commande dry-run
+- [x] Commande help
+- [x] Commande dry-run
 
 ---
 
