@@ -12,6 +12,7 @@ $passwd="/etc/passwd"; # Chemin du fichier passwd
 $fichierHelp="./help.txt"; # Chemin du fichier d'aide
 
 $mdpDefaut = "test"; # Mot de passe à donner au utilisateurs
+$repertoireDefaut = "/home/"; # Repertoire par defaut
 $shellDefaut = "/bin/bash"; # Shell à utiliser par défaut
 $split = ":"; # Split par défaut
 $UID = 1000; # UID minimum
@@ -47,7 +48,7 @@ sub checkParameter {
 
   if ($ajout) {
     my $login = $ARGV[0];
-    my $repPerso = "/home/$login";
+    my $repPerso = "$repertoireDefaut"."$login";
     $repPerso = $ARGV[1] if ( $ARGV[1] );
     print "Ajout de l'utilisateur $login","\n";
     ajout($login,$repPerso);
@@ -160,7 +161,7 @@ sub ajoutParFichier {
     @utilisateur = split($split,$ligne);
     chomp @utilisateur;
     $login = $utilisateur[0];
-    $repPerso = "/home/$login";
+    $repPerso = "$repertoireDefaut"."$login";
     $repPerso = $utilisateur[1] if ($utilisateur[1]);
     if ($login) {
       ajout($login,$repPerso);
