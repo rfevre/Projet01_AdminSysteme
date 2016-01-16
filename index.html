@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Projet01 adminsysteme : Sujet compte utilisateurs">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Projet01 adminsysteme</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/rfevre/Projet01_AdminSysteme">View on GitHub</a>
+
+          <h1 id="project_title">Projet01 adminsysteme</h1>
+          <h2 id="project_tagline">Sujet compte utilisateurs</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/rfevre/Projet01_AdminSysteme/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/rfevre/Projet01_AdminSysteme/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="projet01-administration-systeme" class="anchor" href="#projet01-administration-systeme" aria-hidden="true"><span class="octicon octicon-link"></span></a>Projet01 Administration Systeme</h1>
+
+<h2>
+<a id="par-fevre-rémy---da2i-20152016" class="anchor" href="#par-fevre-r%C3%A9my---da2i-20152016" aria-hidden="true"><span class="octicon octicon-link"></span></a>Par FEVRE Rémy - DA2I 2015/2016</h2>
+
+<hr>
+
+<h3>
+<a id="fonctionnalités-" class="anchor" href="#fonctionnalit%C3%A9s-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fonctionnalités :</h3>
+
+<ul>
+<li>[x] Ajouter utilisateur
+
+<ul>
+<li>[x] Par ligne de commande</li>
+<li>[x] Par un fichier</li>
+</ul>
+</li>
+<li>[x] Supprimer un ou des utilisateurs
+
+<ul>
+<li>[x] Par ligne de commande</li>
+<li>[x] Par un fichier</li>
+</ul>
+</li>
+<li>[x] Modifier les données des utilisateurs (mot de passe, repertoire de travail, langage de commande)
+
+<ul>
+<li>[x] Par ligne de commande</li>
+<li>[x] Par un fichier</li>
+</ul>
+</li>
+<li>[x] Commande help</li>
+<li>[x] Commande dry-run</li>
+</ul>
+
+<hr>
+
+<h3>
+<a id="documentation-utilisateur-" class="anchor" href="#documentation-utilisateur-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation utilisateur :</h3>
+
+<p>Pour utiliser toutes les commandes, vous avez besoin d'être connecté en tant que <strong>root</strong>.</p>
+
+<ul>
+<li>
+<h4>
+<a id="ajouter-un-utilisateur-" class="anchor" href="#ajouter-un-utilisateur-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ajouter un utilisateur :</h4>
+
+<p>Il n'est pas indispensable de définir un repertoire de travail pour chaque utilisateur car par défaut, si aucun repertoire de travail n'est spécifié, les utilisateurs auront leurs dossiers personnel créer dans <strong>/home/</strong> sous la forme suivante <strong>/home/"login_utilisateur"</strong>.</p>
+
+<p>Le mot de passe par défaut pour se connecter sur l'utilisateur est le suivant : <strong>test</strong> (A modifier à la première connexion de l'utilisateur)</p>
+
+<p>Pour ajouter un utilisateur en ligne de commande :</p>
+
+<ul>
+<li><p><code>perl adminSys.pl -a &lt;login_utilisateur&gt; &lt;repertoire_de_travail&gt;</code></p></li>
+<li><p><code>perl adminSys.pl --ajouter &lt;login_utilisateur&gt; &lt;repertoire_de_travail&gt;</code></p></li>
+</ul>
+
+<p>Pour ajouter un ou des utilisateurs grâce à un fichier :</p>
+
+<p>(format du fichier par ligne : <em>"utilisateur"</em>:<em>"repertoire_de_travail"</em>)</p>
+
+<ul>
+<li><p><code>perl adminSys.pl -af &lt;chemin_fichier&gt;</code></p></li>
+<li><p><code>perl adminSys.pl --ajouterParFichier &lt;chemin_fichier&gt;</code></p></li>
+</ul>
+</li>
+<li>
+<h4>
+<a id="supprimer-un-utilisateur-" class="anchor" href="#supprimer-un-utilisateur-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Supprimer un utilisateur :</h4>
+
+<p>Pour supprimer un utilisateur en ligne de commande :</p>
+
+<ul>
+<li><p><code>perl adminSys.pl -s &lt;login_utilisateur&gt;</code></p></li>
+<li><p><code>perl adminSys.pl --supprimer &lt;login_utilisateur&gt;</code></p></li>
+</ul>
+
+<p>Pour supprimer un ou des utilisateurs grâce à un fichier :</p>
+
+<p>(format du fichier par ligne : <em>"utilisateur"</em>)</p>
+
+<ul>
+<li><p><code>perl adminSys.pl -sf &lt;chemin_fichier&gt;</code></p></li>
+<li><p><code>perl adminSys.pl --supprimerParFichier &lt;chemin_fichier&gt;</code></p></li>
+</ul>
+</li>
+<li>
+<h4>
+<a id="modifier-un-utilisateur-" class="anchor" href="#modifier-un-utilisateur-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modifier un utilisateur :</h4>
+
+<p>Le format du paramétre "modification" est le suivant "mot_de_passe:repertoire_de_travail:shell". Les champs ne sont pas tous obligatoires, il est possible de rentrer simplement un mot de passe et de laisser les autres champs vide ("mot_de_passe::").</p>
+
+<p>Pour modifier un utilisateur en ligne de commande :</p>
+
+<ul>
+<li><p><code>perl adminSys.pl -m &lt;login_utilisateur&gt; &lt;modification&gt;</code></p></li>
+<li><p><code>perl adminSys.pl --modifier &lt;login_utilisateur&gt; &lt;modification&gt;</code></p></li>
+</ul>
+
+<p>Pour modifier un ou des utilisateurs grâce à un fichier :</p>
+
+<p>(format du fichier par ligne : <em>"utilisateur"</em>;<em>"mot_de_passe:repertoire_de_travail:shell"</em> )</p>
+
+<ul>
+<li><p><code>perl adminSys.pl -mf &lt;chemin_fichier&gt;</code></p></li>
+<li><p><code>perl adminSys.pl --modifierParFichier &lt;chemin_fichier&gt;</code></p></li>
+</ul>
+</li>
+</ul>
+
+<hr>
+
+<h3>
+<a id="documentation-technique-" class="anchor" href="#documentation-technique-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation technique :</h3>
+
+<p>Cette documentation s'adresse à toutes personnes capable de comprendre et modifier le fichier <strong>adminSys.pl</strong> écrit en <strong>PERL</strong>.</p>
+
+<ul>
+<li>
+<h4>
+<a id="variables-par-défaut-" class="anchor" href="#variables-par-d%C3%A9faut-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Variables par défaut :</h4>
+
+<p>Si besoin, les variables suivante peuvent être modifié pour s'ajuster à ce dont vous avez besoin.</p>
+
+<ul>
+<li>
+<code>$group</code> =&gt; Chemin vers le fichier "group"</li>
+<li>
+<code>$shadow</code> =&gt; Chemin vers le fichier "shadow"</li>
+<li>
+<code>$passwd</code> =&gt; Chemin vers le fichier "passwd"</li>
+<li>
+<code>$fichierHelp</code> =&gt; Chemin vers le fichier d'aide</li>
+<li>
+<code>$mdpDefaut</code> =&gt; Le mot de passe donné aux utilisateurs</li>
+<li>
+<code>$repertoireDefaut</code> =&gt; Repertoire ou enregistrer le repertoire de travail de l'utilisateur</li>
+<li>
+<code>$shellDefaut</code> =&gt; Le shell utilisé</li>
+<li>
+<code>$split</code> =&gt; Le split utilisé pour le format des données</li>
+<li>
+<code>$UID</code> =&gt; UID minimum utilisé</li>
+<li>
+<code>$GID</code> =&gt; GID minimum utilisé</li>
+</ul>
+</li>
+<li>
+<h4>
+<a id="ajouter-un-utilisateur--1" class="anchor" href="#ajouter-un-utilisateur--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ajouter un utilisateur :</h4>
+
+<p>Que cela soit par fichier ou par ligne de commande, la fonction d'ajout d'un utilisateur attend un login utilisateur unique et un repertoire de travail, si le repertoire de travail n'est pas spécifié, par défaut il prendra la valeur suivante <strong>$repertoireDefaut/login_utilisateur</strong>.</p>
+
+<p><code>ajout($login,$repPerso)</code></p>
+
+<p>Cette fonction passe par une HashMap pour enregistrer les informations de l'utilisateur. On utilise cette HashMap pour rajouter une ligne dans les fichiers <strong>passwd</strong>, <strong>shadow</strong> et <strong>group</strong> avec le bon format de ligne.</p>
+
+<p>Ensuite le repertoire de l'utilisateur est créer, on lui attribue les droits nécéssaire et on le définit en tant que propriétaire sur celui-ci, on copie enfin dans ce répertoire les fichiers indispensable à l'initialisation du shell.</p>
+
+<p><code>ajoutParFichier($fichier)</code></p>
+
+<p>Pour chaque ligne du fichier, on appelle la fonction <code>ajout($login,$repPerso)</code></p>
+</li>
+<li>
+<h4>
+<a id="supprimer-un-utilisateur--1" class="anchor" href="#supprimer-un-utilisateur--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Supprimer un utilisateur :</h4>
+
+<p>Que cela soit par fichier ou par ligne de commande, la fonction de suppression d'un utilisateur attend simplement un login utilisateur.</p>
+
+<p><code>suppr($login)</code></p>
+
+<p>Cette fonction retrouve le repertoire de travail de l'utilisateur grâce à une recherche dans le fichier <strong>passwd</strong> de la ligne ou l'on trouve le login de l'utilisateur envoyé à la fonction, ensuite le repertoire de l'utilisateur peut être supprimé.</p>
+
+<p>On supprime aussi dans les fichier <strong>group</strong>,<strong>passwd</strong> et <strong>shadow</strong> la ligne de l'utilisateur.</p>
+
+<p><code>suppressionParFichier($fichier)</code></p>
+
+<p>Pour chaque ligne du fichier, on appelle la fonction <code>suppr($login)</code></p>
+</li>
+<li>
+<h4>
+<a id="modifier-un-utilisateur--1" class="anchor" href="#modifier-un-utilisateur--1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modifier un utilisateur :</h4>
+
+<p>Que cela soit par fichier ou par ligne de commande, la fonction de modification d'un utilisateur attend un login utilisateur et une chaine de caractères de la forme suivante <strong>mot_de_passe:repertoire_de_travail:shell</strong>.</p>
+
+<p><code>modif($login,$modification)</code></p>
+
+<p>Cette fonction modifie la ligne de l'utilisateur dans le fichier <strong>shadow</strong> si le mot de passe doit être modifié et dans le fichier <strong>passwd</strong> si le repertoire de travail ou le shell doit être modifié.</p>
+
+<p><code>modificationParFichier($fichier)</code></p>
+
+<p>Pour chaque ligne du fichier, on appelle la fonction <code>modif($login,$modification)</code></p>
+</li>
+<li>
+<h4>
+<a id="hachage-des-mots-de-passe-" class="anchor" href="#hachage-des-mots-de-passe-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hachage des mots de passe :</h4>
+
+<p>Les mots de passe sont crypté et enregistrer dans le fichier <strong>shadow</strong> grâce à la commande suivante :</p>
+
+<p><code>crypt($mapUtilisateur-&gt;{"mdp"},'$6$salt');</code></p>
+
+<ul>
+<li>$6 =&gt; Correspond à un hachage de type SHA-512</li>
+<li>$salt =&gt; Correspond à la clé de hachage</li>
+</ul>
+</li>
+</ul>
+
+<hr>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Projet01 adminsysteme maintained by <a href="https://github.com/rfevre">rfevre</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
