@@ -25,6 +25,8 @@
 
   Il n'est pas indispensable de définir un repertoire de travail pour chaque utilisateur car par défaut, si aucun repertoire de travail n'est spécifié, les utilisateurs auront leurs dossiers personnel créer dans **/home/** sous la forme suivante **/home/"login_utilisateur"**.
 
+  Le mot de passe par défaut pour se connecter sur l'utilisateur est le suivant : **test**
+
   Pour ajouter un utilisateur en ligne de commande :
 
     - `perl adminSys.pl -a <login_utilisateur> <repertoire_de_travail>`

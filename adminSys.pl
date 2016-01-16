@@ -2,6 +2,9 @@
 
 use Getopt::Long;
 use File::Path qw(make_path remove_tree);
+use POSIX;
+
+# Variables par défaut ------------------------------------
 
 $group="/etc/group"; # Chemin du fichier group
 $shadow="/etc/shadow"; # Chemin du fichier shadow
@@ -14,7 +17,9 @@ $split = ":"; # Split par défaut
 $UID = 1000; # UID minimum
 $GID = 1000; # GID minimum
 
-checkParameter();
+# ---------------------------------------------------------
+
+checkParameter() if (getuid() == 0) or die "Vous n'êtes pas \"root\" \n";
 
 # Verifie les paramétres
 sub checkParameter {
@@ -452,8 +457,8 @@ sub aide {
 sub dryRun {
   my $tabCommandes = shift();
   foreach $option (@{$tabCommandes}) {
-    print $option," : Ajout d'un utilisateur","\n" if ($option eq "a" || $option eq "ajouter");
-    print $option," : Ajout d'un ou plusieurs utilisateur(s) par un fichier","\n" if ($option eq "af" || $option eq "ajouterParFichier");
+    print $option," : Ajout d'un utilisateur (mot de passe par defaut : $mdpDefaut)","\n" if ($option eq "a" || $option eq "ajouter");
+    print $option," : Ajout d'un ou plusieurs utilisateur(s) par un fichier (mot de passe par defaut : $mdpDefaut)","\n" if ($option eq "af" || $option eq "ajouterParFichier");
     print $option," : Suppression d'un utilisateur","\n" if ($option eq "s" || $option eq "supprimer");
     print $option," : Suppression d'un ou plusieurs utilisateur(s) par un fichier","\n" if ($option eq "sf" || $option eq "supprimerParFichier");
     print $option," : Modification d'un utilisateur","\n" if ($option eq "m" || $option eq "modifier");
